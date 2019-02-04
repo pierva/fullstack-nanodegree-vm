@@ -1,0 +1,114 @@
+body {
+    font-family: sans-serif;
+    background-color: #333333;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    color: #ffffff;
+}
+
+h1,
+h2 {
+    font-family: 'georgia', serif;
+    margin: 0;
+}
+
+h1 {
+    border-bottom: 2px solid #eee;
+}
+
+h2 {
+    font-size: 1.2em;
+}
+
+p,
+dd,
+dt {
+    color: #cccccc;
+}
+
+a {
+    text-decoration: none;
+    color: #ffffcc;
+    font-size: .75em;
+}
+
+.pane {
+    position: absolute;
+    left: 25%;
+    border: 2px solid;
+    border-radius: 25px;
+    padding: 5px;
+    margin: 5px;
+    border-color: #999999;
+    background-color: #333333
+}
+
+.header {
+    left: 50%;
+    text-align: center;
+}
+
+.name {
+    width: 50%;
+    display: inline-block;
+    float: left;
+}
+
+.new-item a{
+  font-weight: 200;
+  font-size: 1.6em;
+  padding: 5px auto;
+  transition: all 0.5s ease-in-out;
+  text-align: center;
+  width: 100%;
+  display: inline-block;
+}
+
+.new-item a:hover{
+  background-color: rgba(255, 255, 204, 0.7);
+  color: #333333;
+  border-radius: 5px;
+}
+
+.description {
+  font-weight: 200;
+}
+
+.description p{
+  margin-bottom: 0.5em;
+}
+
+.price {
+    text-align: right;
+    width: 50%;
+    float: right;
+}
+
+.editdeletepane {
+  font-size: 1.1em;
+  padding-bottom: 0.4em;
+}
+
+.editdeletepane a {
+  padding: 5px;
+  border-radius: 3px;
+  width: 50px;
+  display: inline-block;
+  text-align: center;
+}
+
+.edit{
+  background-color:rgba(217, 138, 21, 0.87);;
+}
+
+.delete{
+  background-color: rgba(209, 8, 8, 0.74) ;
+}
+
+.flash {
+    background: #cee5f5;
+}
