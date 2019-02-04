@@ -44,7 +44,8 @@ a {
     padding: 5px;
     margin: 5px;
     border-color: #999999;
-    background-color: #333333
+    background-color: #333333;
+    width: 50%;
 }
 
 .header {
@@ -110,5 +111,14 @@ a {
 }
 
 .flash {
-    background: #cee5f5;
+}
+
+.flash li {
+  list-style: none;
+  color: rgba(77, 232, 0, 0.88);
+  font-weight: 200;
+  border: 1px solid rgba(77, 232, 0, 0.88);
+  border-radius: 10px;
+  text-align: center;
+  font-weight: 200;
 }
