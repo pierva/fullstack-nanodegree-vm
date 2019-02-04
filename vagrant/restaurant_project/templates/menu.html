@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Menu</title>
+  </head>
+  <body>
+    <h1>{{ restaurant.name }}</h1>
+
+    {% for i in items %}
+    {{i.name}}
+
+    <br>
+    {{i.description}}
+    <br>
+    {{.price}}
+    <br>
+    {% endfor %}
+  </body>
+</html>
