@@ -18,19 +18,7 @@ class Restaurant(Base):
     zip = Column(String(10), nullable=True)
     lat = Column(String(10), nullable=True)
     lon = Column(String(10), nullable=True)
-
-
-class MenuItem(Base):
-    __tablename__ = 'menu_item'
-    name = Column(String(80), nullable=False)
-    id = Column(Integer, primary_key=True)
-    course = Column(String(30))
-    description = Column(String(250))
-    price = Column(String(6))
-    picture = Column(String(250), nullable=True)
-    restaurant_id = Column(Integer, ForeignKey('restaurant.id'))
-    restaurant = relationship(Restaurant)
-
+    
     @property
     def serialize_restaurants(self):
         #Returns object data in easily serializeable format
@@ -45,6 +33,20 @@ class MenuItem(Base):
             'lon': self.lon
         }
 
+
+class MenuItem(Base):
+    __tablename__ = 'menu_item'
+    name = Column(String(80), nullable=False)
+    id = Column(Integer, primary_key=True)
+    course = Column(String(30))
+    description = Column(String(250))
+    price = Column(String(6))
+    picture = Column(String(250), nullable=True)
+    restaurant_id = Column(Integer, ForeignKey('restaurant.id'))
+    restaurant = relationship(Restaurant)
+
+
+    @property
     def serialize_menu(self):
         return {
             'restaurant': self.restaurant_id,
