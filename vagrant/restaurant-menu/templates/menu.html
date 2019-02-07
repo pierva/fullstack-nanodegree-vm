@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>{{restaurant.name}} menu</title>
+    {% include 'partials/style-links.html'%}
   </head>
   <body>
     {% include 'partials/flash.html'%}
@@ -25,5 +26,6 @@
       <br>
     {% endfor %}
 
+    {% include 'partials/libraries-js.html'%}
   </body>
 </html>
