@@ -7,24 +7,6 @@ from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Restaurant, MenuItem
 from sqlalchemy import exc
 
-#Fake Restaurants
-# restaurant = {'name': 'The CRUDdy Crab', 'id': '1'}
-# restaurants = [{'name': 'The CRUDdy Crab', 'id': '1'}, {'name':'Blue Burgers',
-#                 'id':'2'},{'name':'Taco Hut', 'id':'3'}]
-
-
-#Fake Menu Items
-items = [{'name':'Cheese Pizza', 'description':'made with fresh cheese',
-          'price':'$5.99','course' :'Entree', 'id':'1'}, {'name':'Chocolate Cake',
-          'description':'made with Dutch Chocolate', 'price':'$3.99',
-          'course':'Dessert','id':'2'},{'name':'Caesar Salad',
-          'description':'with fresh organic vegetables','price':'$5.99',
-          'course':'Entree','id':'3'},{'name':'Iced Tea',
-          'description':'with lemon','price':'$.99', 'course':'Beverage',
-          'id':'4'},{'name':'Spinach Dip', 'description':'creamy dip with fresh spinach',
-          'price':'$1.99', 'course':'Appetizer','id':'5'} ]
-item =  {'name':'Cheese Pizza','description':'made with fresh cheese',
-        'price':'$5.99','course' :'Entree', 'id':'1'}
 
 GEOCODER_API_KEY = 'AIzaSyAt6m54Qc8Vy40NayuNNYRkzcFhpi1OhYg'
 
@@ -53,6 +35,37 @@ def formatAddress(formValues):
               zip = formValues['zip'])
     return address.replace(" ", "+")
 
+
+#  API Routes (GET requests)
+@app.route('/restaurants/JSON')
+def restaurantMenusJSON():
+    try:
+        session = DBSession()
+        restaurants = session.query(Restaurant).all()
+        return jsonify(Restaurant=[r.serialize_restaurants for r in restaurants])
+    except Exception as e:
+        return jsonify({"status": 500, "message": "Server error", "e": e.message})
+
+@app.route('/restaurants/<int:restaurant_id>/menu/JSON')
+def menuJSON(restaurant_id):
+    try:
+        session = DBSession()
+        restaurant = session.query(Restaurant).filter_by(id = restaurant_id).one()
+        items = session.query(MenuItem).filter_by(restaurant_id = restaurant_id).all()
+        return jsonify(Restaurant=restaurant.serialize_restaurants,
+                       Menu=[i.serialize_menu for i in items])
+    except Exception as e:
+        return jsonify({"status": 500, "message": "Server error", "e": e.message})
+
+@app.route('/restaurants/<int:restaurant_id>/menu/<int:item_id>/JSON')
+def menuItemJSON(restaurant_id, item_id):
+    try:
+        session = DBSession()
+        item = session.query(MenuItem).filter_by(restaurant_id = restaurant_id,
+            id = item_id).one()
+        return jsonify(MenuItem=item.serialize_menu)
+    except Exception as e:
+        return jsonify({"status": 500, "message": "Server error", "e": e.message})
 
 @app.route('/')
 @app.route('/restaurants/')
