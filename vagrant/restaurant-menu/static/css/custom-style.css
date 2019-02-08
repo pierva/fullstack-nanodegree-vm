@@ -98,6 +98,11 @@ legend{
   display: block;
 }
 
+.btn-blue{
+  background-color: #013975;
+  border-color: #013975;
+}
+
 
 #map {
   height: 400px;
