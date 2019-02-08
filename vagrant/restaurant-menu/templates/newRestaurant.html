@@ -6,7 +6,7 @@
     {% include 'partials/style-links.html'%}
   </head>
   <body>
-    <div class="container">
+    <div class="container mt-3">
       <header class="page-header mt-2">
         <h1>New restaurant available?</h1>
         <h3>Tell us more</h3>
@@ -103,7 +103,7 @@
             </div>
           {% endif %}
 
-          <p class="text-center mt-2">
+          <p class="text-center mt-4">
             Please validate the address before adding the restaurant
           </p>
 
@@ -121,10 +121,10 @@
             </div>
             </div>
           </div>
-        </div>
       </form>
 
     </div>
+    {% include 'partials/footer.html' %}
 
     <script>
       var flaskData = {{restaurant|tojson}};
