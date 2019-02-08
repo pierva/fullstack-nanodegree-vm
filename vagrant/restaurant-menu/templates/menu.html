@@ -6,25 +6,85 @@
     {% include 'partials/style-links.html'%}
   </head>
   <body>
-    {% include 'partials/flash.html'%}
-    <h1>{{restaurant.name}} menu</h1>
-    <a href="{{url_for('showRestaurants')}}">Home</a>
-    <br>
-    {% if menuItems == []: %}
-      <p>You currently have nothing to offer in your restaurant.</p>
-    {% endif %}
-    <a href="{{url_for('newMenuItem', restaurant_id = restaurant.id)}}">Create new menu item</a>
+    <div class="container h-100">
+      {% include 'partials/flash.html'%}
 
-    {% for i in menuItems %}
-      <p>{{i.name}}</p>
-      <p>${{i.price}}</p>
-      <p>{{i.description}}</p>
-      <a href="{{url_for('editMenuItem', restaurant_id=restaurant.id, item_id = i.id)}}">Edit</a>
-      &nbsp;
-      <a href="{{url_for('deleteMenuItem', restaurant_id=restaurant.id, item_id = i.id)}}">Delete</a>
-      <br>
-      <br>
-    {% endfor %}
+      <header class="page-header">
+        <h1>{{restaurant.name}} menu</h1>
+      </header>
+      <a href="{{url_for('showRestaurants')}}">Home</a>
+
+      {% if menuItems == []: %}
+      <p>You currently have nothing to offer in your restaurant.</p>
+      {% endif %}
+      <a href="{{url_for('newMenuItem', restaurant_id = restaurant.id)}}">Create new menu item</a>
+
+      <div class="row h-75">
+
+        <div class="offset-md-1 col-md-7 col-8 menu-container scrollable">
+          {% for i in menuItems %}
+          <div class="menu-card">
+            <div class="row">
+              <div class="col-7">
+                <a  class="btn btn-edit btn-sm control"
+                  href="{{url_for('editMenuItem', restaurant_id=restaurant.id, item_id = i.id)}}">
+                  Edit
+                </a>
+                <a class="btn btn-danger btn-sm control"
+                  href="{{url_for('deleteMenuItem', restaurant_id=restaurant.id, item_id = i.id)}}">
+                  Delete
+                </a>
+                <div class="row">
+                  <div class="col-12">
+                    <p class="menu-title">{{i.name}}</p>
+                    <div class="row">
+                      <div class="col-12 menu-price">
+                        <sup>$</sup><span>{{i.price}}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="menu-img col-5">
+                <img class="" src="{{i.picture}}" alt="{{i.name}} picture">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 mt-2">
+                <p class="menu-description">{{i.description}}</p>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="navigation col-md-3 col-4">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link active btn-nav" href="#">Amouse-Bouche</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link btn-nav" href="#">Soups</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link  btn-nav" href="#">Entrées</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link  btn-nav" href="#">Main Courses</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link btn-nav" href="#">Side Dishes</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link btn-nav" href="#">Desserts</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      {% include 'partials/footer.html' %}
+
+    </div>
 
     {% include 'partials/libraries-js.html'%}
   </body>
