@@ -103,6 +103,15 @@ legend{
   border-color: #013975;
 }
 
+.delete{
+  color: rgb(191, 2, 1);
+  text-align: center;
+}
+
+.delete i{
+  font-size: 200px;
+}
+
 
 #map {
   height: 400px;
