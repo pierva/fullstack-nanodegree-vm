@@ -88,20 +88,22 @@
             </div>
           </div>
 
-          {% if location: %}
-            <div class="form-row">
+          <div id="coordinates">
+            {% if location: %}
+            <div class="form-row" id="coordinates">
               <div class="form-group col-sm-6">
                 <label for="lat">Latitude</label>
                 <input class="form-control"
-                  type="text" name="lat" value="{{location['lat']}}">
+                type="text" name="lat" value="{{location['lat']}}">
               </div>
               <div class="form-group col-sm-6">
                 <label for="lon">Longitude</label>
                 <input class="form-control"
-                  type="text" name="lon" value="{{location['lng']}}">
+                type="text" name="lon" value="{{location['lng']}}">
               </div>
             </div>
-          {% endif %}
+            {% endif %}
+          </div>
 
           <p class="text-center mt-4">
             Please validate the address before adding the restaurant
@@ -116,8 +118,9 @@
             </div>
             <div class="col-6">
               <input class="btn btn-dark col-6" type="submit" name="submit"
-              value="VALIDATE">
-              <input class="btn btn-success float-right w-50" type="submit" name="submit" value="ADD">
+              value="VALIDATE" id="validate-address">
+              <input  class="btn btn-success float-right w-50" type="submit"
+              name="submit" value="ADD" id="add-restaurant" disabled>
             </div>
             </div>
           </div>
@@ -125,6 +128,9 @@
 
     </div>
     {% include 'partials/footer.html' %}
+
+    <script src="{{url_for('static', filename = 'js/lib/jquery-3.3.1.js')}}"></script>
+    <script src="{{url_for('static', filename = 'js/validation.js')}}"></script>
 
     <script>
       var flaskData = {{restaurant|tojson}};
