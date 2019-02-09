@@ -12,12 +12,23 @@
       <header class="page-header">
         <h1>{{restaurant.name}} menu</h1>
       </header>
-      <a href="{{url_for('showRestaurants')}}">Home</a>
 
-      {% if menuItems == []: %}
-      <p>You currently have nothing to offer in your restaurant.</p>
-      {% endif %}
-      <a href="{{url_for('newMenuItem', restaurant_id = restaurant.id)}}">Create new menu item</a>
+      <div class="row offset-md-1 col-md-7 col-8">
+          <div class="col-4">
+            <a href="{{url_for('showRestaurants')}}">Home</a>
+          </div>
+          <div class="col-8 text-right">
+            <a href="{{url_for('newMenuItem', restaurant_id = restaurant.id)}}">Create new menu item</a>
+          </div>
+      </div>
+      <div class="row">
+        <div class="offset-md-1">
+          {% if menuItems == []: %}
+          <p>You currently have nothing to offer in your restaurant.</p>
+          {% endif %}
+        </div>
+
+      </div>
 
       <div class="row h-75">
 
