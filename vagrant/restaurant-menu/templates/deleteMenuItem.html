@@ -3,12 +3,37 @@
   <head>
     <meta charset="utf-8">
     <title>Delete {{item.name}} from {{restaurant.name}}</title>
+    {% include 'partials/style-links.html'%}
   </head>
   <body>
-    <h1>Are you sure you want to delete {{item.name}} from {{restaurant.name}}</h1>
-    <form class="" action="{{url_for('deleteMenuItem', restaurant_id = restaurant.id, item_id = item.id)}}" method="post">
-      <input type="submit" value="Delete">
-    </form>
-        <a href="{{url_for('showMenu', restaurant_id = restaurant.id)}}">Back to menu</a>
+
+    <div class="container mt-3">
+      <header class="page-header">
+        <h1>Are you sure you want to delete {{item.name}} from {{restaurant.name}}</h1>
+      </header>
+      <div class="delete animated bounce delay-1s">
+        <i class="ion-ios-trash"></i>
+        <p>This action is not reversible</p>
+      </div>
+
+      <form class="" action="{{url_for('deleteMenuItem',
+          restaurant_id = restaurant.id, item_id = item.id)}}" method="post">
+        <div class="form-row justify-content-center">
+          <div class="col-4">
+            <a class="form-control btn btn-dark"
+              href="{{url_for('showMenu', restaurant_id = restaurant.id)}}">
+              CANCEL
+            </a>
+          </div>
+          <div class="col-4">
+            <input class="form-control btn btn-danger" type="submit" value="DELETE">
+          </div>
+        </div>
+      </form>
+    </div>
+
+    {% include 'partials/footer.html' %}
+
+    {% include 'partials/libraries-js.html'%}
   </body>
 </html>
