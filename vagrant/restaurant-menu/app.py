@@ -86,18 +86,22 @@ def newRestaurant():
                 location = geocoder(address)
                 return render_template('newRestaurant.html', restaurant = request.form, location=location)
             elif request.form['submit'] == 'ADD':
-                session = DBSession()
-                newRestaurant = Restaurant(name = request.form['name'],
-                street = request.form['street'],
-                city = request.form['city'],
-                state = request.form['state'],
-                zip = request.form['zip'],
-                lat = request.form['lat'],
-                lon = request.form['lon'])
-                session.add(newRestaurant)
-                session.commit()
-                flash("New restaurant succesfully added!")
-                return redirect(url_for('showRestaurants'))
+                if not request.form['lat'] or request.form['lon']:
+                    flash("Please validate address before adding restaurant.")
+                    return redirect(url_for('newRestaurant'))
+                else:
+                    session = DBSession()
+                    newRestaurant = Restaurant(name = request.form['name'],
+                    street = request.form['street'],
+                    city = request.form['city'],
+                    state = request.form['state'],
+                    zip = request.form['zip'],
+                    lat = request.form['lat'],
+                    lon = request.form['lon'])
+                    session.add(newRestaurant)
+                    session.commit()
+                    flash("New restaurant succesfully added!")
+                    return redirect(url_for('showRestaurants'))
         except Exception as e:
             render_template('error.html',
                             errMessage='Unable to add the restaurant')
