@@ -1,4 +1,5 @@
 import os
+import config
 import requests
 import unicodedata
 from flask import Flask, request, url_for, flash, render_template, redirect, jsonify
@@ -10,7 +11,7 @@ from sqlalchemy import exc
 from flask import session as login_session
 import random, string
 
-GEOCODER_API_KEY = 'AIzaSyAt6m54Qc8Vy40NayuNNYRkzcFhpi1OhYg'
+GEOCODER_API_KEY = config.GEOCODER_API_KEY
 
 app = Flask(__name__)
 engine = engine = create_engine('sqlite:///menus.db')
@@ -45,7 +46,7 @@ def showLogin():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in xrange(32))
     login_session['state'] = state
-    return render_template("login.html")
+    return render_template("login.html", STATE=state)
 
 #  API Routes (GET requests)
 @app.route('/restaurants/JSON')
