@@ -2,17 +2,20 @@
 <html>
 <head>
   <title>Login</title>
-  <meta name="google-signin-client_id" content="31130590119-ssjunmcl4a7jc5oahehak6gmh6eakjj1.apps.googleusercontent.com">
+  <meta name="google-signin-client_id" content="<YOUR_API_KEY>.apps.googleusercontent.com">
 </head>
 <body>
   <div id="my-signin2"></div>
   <script>
     function onSuccess(googleUser) {
       console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
+      console.log(googleUser);
     }
+
     function onFailure(error) {
       console.log(error);
     }
+
     function renderButton() {
       gapi.signin2.render('my-signin2', {
         'scope': 'profile email',
