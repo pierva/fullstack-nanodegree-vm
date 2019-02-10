@@ -7,6 +7,8 @@ from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Restaurant, MenuItem
 from sqlalchemy import exc
 
+from flask import session as login_session
+import random, string
 
 GEOCODER_API_KEY = 'AIzaSyAt6m54Qc8Vy40NayuNNYRkzcFhpi1OhYg'
 
@@ -35,6 +37,15 @@ def formatAddress(formValues):
               zip = formValues['zip'])
     return address.replace(" ", "+")
 
+
+# Create a state token to prevent requests forgery
+# Store it in the session for later validation
+@app.route('/login')
+def showLogin():
+    state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+                    for x in xrange(32))
+    login_session['state'] = state
+    return "The current session state is {}".format(login_session['state'])
 
 #  API Routes (GET requests)
 @app.route('/restaurants/JSON')
