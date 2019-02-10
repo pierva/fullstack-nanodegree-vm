@@ -1,23 +1,31 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title>Login</title>
-    <script src="{{url_for('static', filename = 'js/lib/jquery-3.3.1.js')}}"></script>
-    <script src="https://apis.google.com/js/client:platform.
-                js?onload=start" async defer></script>
-  </head>
-  <body>
-    <div id="signinButton">
-      <span class="g-signin"
-        data-scope="openid email"
-        data-clientid="31130590119-ssjunmcl4a7jc5oahehak6gmh6eakjj1.apps.googleusercontent.com"
-        data-redirecturi="postmessage"
-        data-accesstype="offline"
-        data-cookiepolicy="single_host_origin"
-        data-callback="signInCallback"
-        data-approvalprompt="force">
-      </span>
-    </div>
-  </body>
+<html>
+<head>
+  <title>Login</title>
+  <meta name="google-signin-client_id" content="31130590119-ssjunmcl4a7jc5oahehak6gmh6eakjj1.apps.googleusercontent.com">
+</head>
+<body>
+  <div id="my-signin2"></div>
+  <script>
+    function onSuccess(googleUser) {
+      console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
+    }
+    function onFailure(error) {
+      console.log(error);
+    }
+    function renderButton() {
+      gapi.signin2.render('my-signin2', {
+        'scope': 'profile email',
+        'width': 240,
+        'height': 50,
+        'longtitle': true,
+        'theme': 'dark',
+        'onsuccess': onSuccess,
+        'onfailure': onFailure
+      });
+    }
+  </script>
+
+  <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+</body>
 </html>
