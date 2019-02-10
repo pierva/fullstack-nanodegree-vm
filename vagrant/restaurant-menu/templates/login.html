@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Login</title>
+    <script src="{{url_for('static', filename = 'js/lib/jquery-3.3.1.js')}}"></script>
+    <script src="https://apis.google.com/js/client:platform.
+                js?onload=start" async defer></script>
+  </head>
+  <body>
+    <div id="signinButton">
+      <span class="g-signin"
+        data-scope="openid email"
+        data-clientid="31130590119-ssjunmcl4a7jc5oahehak6gmh6eakjj1.apps.googleusercontent.com"
+        data-redirecturi="postmessage"
+        data-accesstype="offline"
+        data-cookiepolicy="single_host_origin"
+        data-callback="signInCallback"
+        data-approvalprompt="force">
+      </span>
+    </div>
+  </body>
+</html>
