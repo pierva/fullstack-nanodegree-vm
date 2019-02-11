@@ -2,33 +2,88 @@
 <html>
 <head>
   <title>Login</title>
-  <meta name="google-signin-client_id" content="<YOUR_API_KEY>.apps.googleusercontent.com">
+  <meta name="google-signin-client_id" content="<YOU_CLIENT_ID>.apps.googleusercontent.com">
+  {% include 'partials/style-links.html'%}
 </head>
 <body>
-  <div id="my-signin2"></div>
+  <div class="container mt-3 text-center">
+    <div id="result">
+      Trying to load data from the server...
+    </div>
+    <div class="login-container">
+      <p>Please login with one of the below providers.</p>
+
+      <div id="signinButton">
+        <span class="g-signin"
+          data-scope="openid email"
+          data-clientid="<YOU_CLIENT_ID>.apps.googleusercontent.com"
+          data-redirecturi="postmessage"
+          data-accesstype="offline"
+          data-cookiepolicy="single_host_origin"
+          data-callback="signInCallback"
+          data-approvalprompt="force">
+        </span>
+      </div>
+
+      <div class="">
+        <a class="btn btn-dark btn-sm"
+          href="{{url_for('showRestaurants')}}">CANCEL</a>
+      </div>
+    </div>
+
+    {% include 'partials/footer.html' %}
+  </div>
   <script>
-    function onSuccess(googleUser) {
-      console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
-      console.log(googleUser);
-    }
 
-    function onFailure(error) {
-      console.log(error);
-    }
+    // function renderButton() {
+    //   $('#result').text("");
+    //   try {
+    //     gapi.signin2.render('my-signin2', {
+    //       'scope': 'profile email',
+    //       'width': 240,
+    //       'height': 50,
+    //       'longtitle': true,
+    //       'theme': 'dark',
+    //       'onsuccess': signInCallback,
+    //       'onfailure': onFailure
+    //     });
+    //   } catch (e) {
+    //     $("#result").html("Unable to load sign in button... Make sure you're connected to the internet.")
+    //   }
+    // }
 
-    function renderButton() {
-      gapi.signin2.render('my-signin2', {
-        'scope': 'profile email',
-        'width': 240,
-        'height': 50,
-        'longtitle': true,
-        'theme': 'dark',
-        'onsuccess': onSuccess,
-        'onfailure': onFailure
-      });
+    function signInCallback(authResult) {
+      if (authResult['code']) {
+        // Hide the sign-in button now that the user is authorized
+        $('#signinButton').attr('style', 'display: none');
+        // Send the one-time-use code to the server, if the server responds, write a 'login successful' message to the web page and then redirect back to the main restaurants page
+        $.ajax({
+          type: 'POST',
+          url: '/gconnect?state={{STATE}}',
+          processData: false,
+          data: authResult['code'],
+          contentType: 'application/octet-stream; charset=utf-8',
+          success: function(result) {
+            // Handle or verify the server response if necessary.
+            if (result) {
+              $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
+             setTimeout(function() {
+              window.location.href = "/restaurants";
+             }, 4000);
+
+          } else if (authResult['error']) {
+            console.log('There was an error: ' + authResult['error']);
+          } else {
+            $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+             }
+          }
+
+        });
+      }
     }
   </script>
-
-  <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+  <script src="{{url_for('static', filename = 'js/lib/jquery-3.3.1.js')}}"></script>
+  <script src="//apis.google.com/js/platform.js?onload=start"></script>
+  <!-- <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script> -->
 </body>
 </html>
