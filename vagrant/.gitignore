@@ -3,3 +3,4 @@ __pycache__
 .vagrant
 *.db
 config.py
+client_secrets.json
