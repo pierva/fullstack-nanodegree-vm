@@ -26,7 +26,7 @@
               <label for="city">City</label>
               <input class="form-control" type="text" name="city" value="{{restaurant['city']}}">
             </div>
-            <div class="form-group col-sm-4">
+            <div class="form-group col-sm-4 col-6">
               <label for="state">State</label>
               <select id="state" class="form-control" name="state">
                 <option value="AL">Alabama</option>
@@ -82,7 +82,7 @@
                 <option value="WY">Wyoming</option>
               </select>
             </div>
-            <div class="form-group col-sm-4">
+            <div class="form-group col-sm-4 col-6">
               <label for="zip">Zip Code</label>
               <input class="form-control" type="text" name="zip" value="{{restaurant['zip']}}">
             </div>
@@ -90,13 +90,13 @@
 
           <div id="coordinates">
             {% if location: %}
-            <div class="form-row" id="coordinates">
-              <div class="form-group col-sm-6">
+            <div class="form-row coordinates">
+              <div class="form-group col-6">
                 <label for="lat">Latitude</label>
                 <input class="form-control"
                 type="text" name="lat" value="{{location['lat']}}">
               </div>
-              <div class="form-group col-sm-6">
+              <div class="form-group col-6">
                 <label for="lon">Longitude</label>
                 <input class="form-control"
                 type="text" name="lon" value="{{location['lng']}}">
@@ -109,7 +109,7 @@
             Please validate the address before adding the restaurant
           </p>
 
-          <div class="row justify-content-between mt-3">
+          <div class="row justify-content-between mt-3 mb-3">
             <div class="col-4">
               <a class="btn btn-dark w-75"
                 href="{{url_for('showRestaurants')}}">

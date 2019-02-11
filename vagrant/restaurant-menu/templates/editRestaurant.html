@@ -26,7 +26,7 @@
               <label for="city">City</label>
               <input class="form-control" type="text" name="city" value="{{restaurant['city']}}">
             </div>
-            <div class="form-group col-sm-4">
+            <div class="form-group col-sm-4 col-6">
               <label for="state">State</label>
               <select id="state" class="form-control" name="state">
                 <option value="AL">Alabama</option>
@@ -82,19 +82,19 @@
                 <option value="WY">Wyoming</option>
               </select>
             </div>
-            <div class="form-group col-sm-4">
+            <div class="form-group col-sm-4 col-6">
               <label for="zip">Zip Code</label>
               <input class="form-control" type="text" name="zip" value="{{restaurant['zip']}}">
             </div>
           </div>
 
-            <div class="form-row">
-              <div class="form-group col-sm-6">
+            <div class="form-row coordinates">
+              <div class="form-group col-6">
                 <label for="lat">Latitude</label>
                 <input class="form-control"
                   type="text" name="lat" value="{{restaurant['lat']}}">
               </div>
-              <div class="form-group col-sm-6">
+              <div class="form-group col-6">
                 <label for="lon">Longitude</label>
                 <input class="form-control"
                   type="text" name="lon" value="{{restaurant['lon']}}">
@@ -105,7 +105,7 @@
             If the address is changed, please validate it before adding the restaurant
           </p>
 
-          <div class="row justify-content-between mt-3">
+          <div class="row justify-content-between mt-3 mb-3">
             <div class="col-4">
               <a class="btn btn-dark w-75"
                 href="{{url_for('showRestaurants')}}">
@@ -115,7 +115,7 @@
             <div class="col-6">
               <input class="btn btn-dark col-6" type="submit" name="submit"
               value="VALIDATE">
-              <input class="btn btn-success float-right w-50" type="submit" name="submit" value="ADD">
+              <input id="add-restaurant" class="btn btn-success float-right w-50" type="submit" name="submit" value="ADD">
             </div>
             </div>
           </div>
@@ -129,6 +129,8 @@
       var stateSel = document.querySelector('#state');
       stateSel.value = state
     </script>
+    <script src="{{url_for('static', filename = 'js/lib/jquery-3.3.1.js')}}"></script>
+    <script src="{{url_for('static', filename = 'js/validation.js')}}"></script>
 
   </body>
 </html>
