@@ -186,6 +186,7 @@ def restaurantMenusJSON():
     except Exception as e:
         return jsonify({"status": 500, "message": "Server error", "e": e.message})
 
+
 @app.route('/restaurants/<int:restaurant_id>/menu/JSON')
 def menuJSON(restaurant_id):
     try:
@@ -197,6 +198,7 @@ def menuJSON(restaurant_id):
     except Exception as e:
         return jsonify({"status": 500, "message": "Server error", "e": e.message})
 
+
 @app.route('/restaurants/<int:restaurant_id>/menu/<int:item_id>/JSON')
 def menuItemJSON(restaurant_id, item_id):
     try:
@@ -206,6 +208,7 @@ def menuItemJSON(restaurant_id, item_id):
         return jsonify(MenuItem=item.serialize_menu)
     except Exception as e:
         return jsonify({"status": 500, "message": "Server error", "e": e.message})
+
 
 @app.route('/')
 @app.route('/restaurants/')
@@ -217,6 +220,8 @@ def showRestaurants():
 
 @app.route('/restaurant/new', methods=['GET', 'POST'])
 def newRestaurant():
+    if 'username' not in login_session:
+        return redirect('/login')
     if request.method == 'GET':
         return render_template('newRestaurant.html', restaurant=[])
     elif request.method == 'POST':
@@ -226,7 +231,7 @@ def newRestaurant():
                 location = geocoder(address)
                 return render_template('newRestaurant.html', restaurant = request.form, location=location)
             elif request.form['submit'] == 'ADD':
-                if not request.form['lat'] or request.form['lon']:
+                if request.form['lat'] is None or request.form['lon'] is None:
                     flash("Please validate address before adding restaurant.")
                     return redirect(url_for('newRestaurant'))
                 else:
@@ -250,6 +255,8 @@ def newRestaurant():
 
 @app.route('/restaurant/<int:restaurant_id>/edit', methods=['GET', 'POST'])
 def editRestaurant(restaurant_id):
+    if 'username' not in login_session:
+        return redirect('/login')
     session = DBSession()
     restaurant = session.query(Restaurant).filter_by(id = restaurant_id).one()
     if request.method == 'POST':
@@ -287,6 +294,8 @@ def editRestaurant(restaurant_id):
 
 @app.route('/restaurant/<int:restaurant_id>/delete', methods=['GET', 'POST'])
 def deleteRestaurant(restaurant_id):
+    if 'username' not in login_session:
+        return redirect('/login')
     try:
         session = DBSession()
         restaurant = session.query(Restaurant).filter_by(id = restaurant_id).one()
@@ -319,6 +328,8 @@ def showMenu(restaurant_id):
 
 @app.route('/restaurant/<int:restaurant_id>/new', methods=['GET', 'POST'])
 def newMenuItem(restaurant_id):
+    if 'username' not in login_session:
+        return redirect('/login')
     try:
         session = DBSession()
         restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
@@ -343,6 +354,8 @@ def newMenuItem(restaurant_id):
 
 @app.route('/restaurant/<int:restaurant_id>/<int:item_id>/edit', methods=['GET', 'POST'])
 def editMenuItem(restaurant_id, item_id):
+    if 'username' not in login_session:
+        return redirect('/login')
     try:
         session = DBSession()
         restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
@@ -367,6 +380,8 @@ def editMenuItem(restaurant_id, item_id):
 
 @app.route('/restaurant/<int:restaurant_id>/<int:item_id>/delete', methods=['GET', 'POST'])
 def deleteMenuItem(restaurant_id, item_id):
+    if 'username' not in login_session:
+        return redirect('/login')
     try:
         session = DBSession()
         restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
