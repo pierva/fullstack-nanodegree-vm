@@ -5,7 +5,7 @@ import unicodedata
 from flask import Flask, request, url_for, flash, render_template, redirect, jsonify
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from database_setup import Base, Restaurant, MenuItem
+from database_setup import Base, Restaurant, MenuItem, User
 from sqlalchemy import exc
 
 # libraries import for user authenthication
@@ -27,7 +27,7 @@ CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 
 app = Flask(__name__)
-engine = engine = create_engine('sqlite:///menus.db')
+engine = engine = create_engine('sqlite:///menuswithusers.db')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind = engine)
 
@@ -133,6 +133,12 @@ def gconnect():
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
 
+    # Check if user exists, if not, create a new one
+    user_id = getUserID(data['email'])
+    if not user_id:
+        user_id = createUser(login_session)
+    login_session['user_id'] = user_id
+
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
@@ -168,13 +174,17 @@ def gdisconnect():
         del login_session['username']
         del login_session['email']
         del login_session['picture']
-        response = make_response(json.dumps('Successfully disconnected.'), 200)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        # response = make_response(json.dumps('Successfully disconnected.'), 200)
+        # response.headers['Content-Type'] = 'application/json'
+        # return response
+        flash("Successfully disconnected.")
+        return redirect(url_for('showRestaurants'))
     else:
         response = make_response(json.dumps('Failed to revoke token for given user.', 400))
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        response.headers['Content-Type'] = 'text/html; charset=utf-8'
+        flash('Failed to revoke token. Logout failed')
+        return redirect(url_for('showRestaurants'))
+        # return response
 
 #  API Routes (GET requests)
 @app.route('/restaurants/JSON')
@@ -242,7 +252,8 @@ def newRestaurant():
                     state = request.form['state'],
                     zip = request.form['zip'],
                     lat = request.form['lat'],
-                    lon = request.form['lon'])
+                    lon = request.form['lon'],
+                    user_id = login_session['user_id'])
                     session.add(newRestaurant)
                     session.commit()
                     flash("New restaurant succesfully added!")
@@ -339,7 +350,8 @@ def newMenuItem(restaurant_id):
                                course = request.form['course'],
                                description = request.form['description'],
                                picture = request.form['picture'],
-                               restaurant_id = restaurant.id)
+                               restaurant_id = restaurant.id,
+                               user_id = restaurant.user_id)
             session.add(newItem)
             session.commit()
             flash("{} succesfully added in {}'s menu.".format(
@@ -399,7 +411,35 @@ def deleteMenuItem(restaurant_id, item_id):
             errMessage="Error while communicating with the database.\n" + e.message)
 
 
+def createUser(login_session):
+    try:
+        session = DBSession()
+        newUser = User(name = login_session['username'],
+                       email = login_session['email'],
+                       picture = login_session['picture'])
+        session.add(newUser)
+        session.commit()
+        user = session.query(User).filter_by(email = login_session['email']).one()
+        return user.id
+    except exc.SQLAlchemyError as e:
+        return render_template('error.html',
+            errMessage="Error while communicating with the database.\n" + e.message)
 
+def getUserInfo(user_id):
+    try:
+        session = DBSession()
+        user = session.query(User).filter_by(id= user_id).one()
+        return user
+    except exc.SQLAlchemyError as e:
+        return render_template('error.html',
+            errMessage="Error while communicating with the database.\n" + e.message)
+
+def getUserID(email):
+    try:
+        session = DBSession()
+        user = session.query(User).filter_by(email= email).one()
+    except:
+        return None
 
 if __name__ == '__main__':
     app.secret_key = os.urandom(24)
