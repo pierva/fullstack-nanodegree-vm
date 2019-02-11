@@ -6,8 +6,10 @@
     {% include 'partials/style-links.html'%}
   </head>
   <body>
-        {% include 'partials/flash.html'%}
+    {% include 'partials/flash.html'%}
+    {% include 'partials/login-logout.html'%}
 
+      </div>
       <div class="container">
         <header class="page-header">
           <h1>Where you wanna dine?</h1>
@@ -24,6 +26,7 @@
                   <p>{{restaurant.name}}<p>
                     <a href="#" data-lat="{{restaurant.lat}}"
                     data-lon="{{restaurant.lon}}"
+                    data-name="{{restaurant.name}}"
                     class="show-on-map"
                     >
                     View on map
@@ -71,7 +74,7 @@
 
     {% include 'partials/libraries-js.html'%}
     <script src="{{url_for('static', filename = 'js/map-code.js')}}"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key='YOUR-API-KEY'g&callback=initMap"
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR-KEY-HERE=initMap"
     async defer></script>
   </body>
 </html>
