@@ -129,12 +129,17 @@ def gconnect():
 
     data = answer.json()
 
-    login_session['username'] = data['name']
-    login_session['picture'] = data['picture']
-    login_session['email'] = data['email']
+    try:
+        login_session['username'] = data['name']
+        login_session['picture'] = data['picture']
+        login_session['email'] = data['email']
+    except KeyError as e:
+        output = ''
+        output += "Something wrong with your account. Unable to retrieve %s" % e
+        return output
 
     # Check if user exists, if not, create a new one
-    user_id = getUserID(data['email'])
+    user_id = getUserID(login_session['email'])
     if not user_id:
         user_id = createUser(login_session)
     login_session['user_id'] = user_id
@@ -223,9 +228,18 @@ def menuItemJSON(restaurant_id, item_id):
 @app.route('/')
 @app.route('/restaurants/')
 def showRestaurants():
-    session = DBSession()
-    restaurants = session.query(Restaurant).all()
-    return render_template('restaurants.html', restaurants = restaurants)
+    try:
+        session = DBSession()
+        restaurants = session.query(Restaurant).all()
+        if 'user_id' in login_session:
+            user = getUserInfo(login_session['user_id'])
+            return render_template('restaurants.html', restaurants = restaurants,
+                                    user = user)
+        else:
+            return render_template('restaurants.html', restaurants = restaurants,
+            user = None)
+    except Exception as e:
+        raise
 
 
 @app.route('/restaurant/new', methods=['GET', 'POST'])
@@ -270,38 +284,43 @@ def editRestaurant(restaurant_id):
         return redirect('/login')
     session = DBSession()
     restaurant = session.query(Restaurant).filter_by(id = restaurant_id).one()
-    if request.method == 'POST':
-        if request.form['submit'] == 'VALIDATE':
-            address = formatAddress(request.form)
-            location = geocoder(address)
-            restaurant.street = request.form['street']
-            restaurant.city = request.form['city']
-            restaurant.state = request.form['state']
-            restaurant.zip = request.form['zip']
-            restaurant.lat = location['lat']
-            restaurant.lon = location['lng']
-            return render_template('editRestaurant.html',
-                                    restaurant_id=restaurant.id,
-                                    restaurant=restaurant)
-        elif request.form['submit'] == 'EDIT':
+    if login_session['user_id'] == restaurant.user_id:
+        if request.method == 'POST':
+            if request.form['submit'] == 'VALIDATE':
+                address = formatAddress(request.form)
+                location = geocoder(address)
+                restaurant.street = request.form['street']
+                restaurant.city = request.form['city']
+                restaurant.state = request.form['state']
+                restaurant.zip = request.form['zip']
+                restaurant.lat = location['lat']
+                restaurant.lon = location['lng']
+                return render_template('editRestaurant.html',
+                                        restaurant_id=restaurant.id,
+                                        restaurant=restaurant)
+            elif request.form['submit'] == 'EDIT':
+                try:
+                    if request.form['name']:
+                        restaurant.name = request.form['name']
+                    session.add(restaurant)
+                    session.commit()
+                    flash("{} succesfully updated!".format(restaurant.name))
+                    return redirect(url_for('showRestaurants'))
+                except Exception as e:
+                        render_template('error.html',
+                                        errMessage='Unable to save the changes')
+        else:
             try:
-                if request.form['name']:
-                    restaurant.name = request.form['name']
-                session.add(restaurant)
-                session.commit()
-                flash("{} succesfully updated!".format(restaurant.name))
-                return redirect(url_for('showRestaurants'))
+                return render_template('editRestaurant.html',
+                                        restaurant_id=restaurant.id,
+                                        restaurant=restaurant)
             except Exception as e:
-                    render_template('error.html',
-                                    errMessage='Unable to save the changes')
+                return render_template('error.html',
+                                        errMessage="Unable to open the update page.")
     else:
-        try:
-            return render_template('editRestaurant.html',
-                                    restaurant_id=restaurant.id,
-                                    restaurant=restaurant)
-        except Exception as e:
-            return render_template('error.html',
-                                    errMessage="Unable to open the update page.")
+        flash("Sorry, you're not authorized to edit this restaurant.")
+        return redirect(url_for('showRestaurants'))
+
 
 @app.route('/restaurant/<int:restaurant_id>/delete', methods=['GET', 'POST'])
 def deleteRestaurant(restaurant_id):
@@ -310,14 +329,18 @@ def deleteRestaurant(restaurant_id):
     try:
         session = DBSession()
         restaurant = session.query(Restaurant).filter_by(id = restaurant_id).one()
-        if request.method == 'POST':
-            session.delete(restaurant)
-            session.commit()
-            flash("{} sadly deleted from the database.".format(restaurant.name))
-            return redirect(url_for('showRestaurants'))
+        if login_session['user_id'] == restaurant.user_id:
+            if request.method == 'POST':
+                session.delete(restaurant)
+                session.commit()
+                flash("{} sadly deleted from the database.".format(restaurant.name))
+                return redirect(url_for('showRestaurants'))
+            else:
+                return render_template('deleteRestaurant.html', restaurant_id=restaurant_id,
+                    restaurant=restaurant)
         else:
-            return render_template('deleteRestaurant.html', restaurant_id=restaurant_id,
-                restaurant=restaurant)
+            flash("Sorry, you're not authorized to delete this restaurant.")
+            return redirect(url_for('showRestaurants'))
     except exc.SQLAlchemyError as e:
         return render_template('error.html',
                                 errMessage="Error while fetching data from the database.")
@@ -330,8 +353,13 @@ def showMenu(restaurant_id):
         restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
         menuItems = session.query(MenuItem).filter_by(
             restaurant_id=restaurant.id).all()
-        return render_template('menu.html', restaurant=restaurant,
-                                menuItems = menuItems)
+        if 'user_id' in login_session:
+            user = getUserInfo(login_session['user_id'])
+            return render_template('menu.html', restaurant=restaurant,
+                                    menuItems = menuItems, user = user)
+        else:
+            return render_template('menu.html', restaurant=restaurant,
+                                    menuItems = menuItems, user = None)
     except exc.SQLAlchemyError as e:
         return render_template('error.html',
             errMessage="Error while fetching data from the database.")
@@ -344,21 +372,22 @@ def newMenuItem(restaurant_id):
     try:
         session = DBSession()
         restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
-        if request.method == 'POST':
-            newItem = MenuItem(name = request.form['name'],
-                               price = request.form['price'],
-                               course = request.form['course'],
-                               description = request.form['description'],
-                               picture = request.form['picture'],
-                               restaurant_id = restaurant.id,
-                               user_id = restaurant.user_id)
-            session.add(newItem)
-            session.commit()
-            flash("{} succesfully added in {}'s menu.".format(
-                newItem.name, restaurant.name))
-            return redirect(url_for('showMenu', restaurant_id=restaurant.id))
-        else:
-            return render_template("newMenuItem.html", restaurant=restaurant)
+        if login_session['user_id'] == restaurant.user_id:
+            if request.method == 'POST':
+                newItem = MenuItem(name = request.form['name'],
+                                   price = request.form['price'],
+                                   course = request.form['course'],
+                                   description = request.form['description'],
+                                   picture = request.form['picture'],
+                                   restaurant_id = restaurant.id,
+                                   user_id = restaurant.user_id)
+                session.add(newItem)
+                session.commit()
+                flash("{} succesfully added in {}'s menu.".format(
+                    newItem.name, restaurant.name))
+                return redirect(url_for('showMenu', restaurant_id=restaurant.id))
+            else:
+                return render_template("newMenuItem.html", restaurant=restaurant)
     except exc.SQLAlchemyError as e:
         return render_template('error.html',
             errMessage="Error while fetching data from the database.")
@@ -372,20 +401,24 @@ def editMenuItem(restaurant_id, item_id):
         session = DBSession()
         restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
         item = session.query(MenuItem).filter_by(id=item_id).one()
-        if request.method == 'POST':
-            item.name = request.form['name']
-            item.price = request.form['price']
-            item.course = request.form['course']
-            item.description = request.form['description']
-            item.picture = request.form['picture']
-            session.add(item)
-            session.commit()
-            flash("{} succesfully updated in {}'s menu.".format(
-                item.name, restaurant.name))
-            return redirect(url_for('showMenu', restaurant_id=restaurant.id))
+        if item.user_id == login_session['user_id']:
+            if request.method == 'POST':
+                item.name = request.form['name']
+                item.price = request.form['price']
+                item.course = request.form['course']
+                item.description = request.form['description']
+                item.picture = request.form['picture']
+                session.add(item)
+                session.commit()
+                flash("{} succesfully updated in {}'s menu.".format(
+                    item.name, restaurant.name))
+                return redirect(url_for('showMenu', restaurant_id=restaurant.id))
+            else:
+                return render_template('editMenuItem.html', restaurant=restaurant,
+                                       item= item)
         else:
-            return render_template('editMenuItem.html', restaurant=restaurant,
-                                   item= item)
+            return render_template('error.html',
+                errMessage="Sorry, you don't have the right permissions to access the page.")
     except exc.SQLAlchemyError as e:
         return render_template('error.html',
             errMessage="Error while communicating with the database.\n" + e.message)
@@ -398,14 +431,18 @@ def deleteMenuItem(restaurant_id, item_id):
         session = DBSession()
         restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
         item = session.query(MenuItem).filter_by(id=item_id).one()
-        if request.method == 'POST':
-            session.delete(item)
-            session.commit()
-            flash("{} in {}'s menu sadly deleted.".format(
-                item.name, restaurant.name))
-            return redirect(url_for('showMenu', restaurant_id=restaurant.id))
+        if item.user_id == login_session['user_id']:
+            if request.method == 'POST':
+                session.delete(item)
+                session.commit()
+                flash("{} in {}'s menu sadly deleted.".format(
+                    item.name, restaurant.name))
+                return redirect(url_for('showMenu', restaurant_id=restaurant.id))
+            else:
+                return render_template('deleteMenuItem.html', restaurant=restaurant, item = item)
         else:
-            return render_template('deleteMenuItem.html', restaurant=restaurant, item = item)
+            return render_template('error.html',
+                errMessage="Sorry, you don't have the right permissions to access the page.")
     except exc.SQLAlchemyError as e:
         return render_template('error.html',
             errMessage="Error while communicating with the database.\n" + e.message)
@@ -422,8 +459,7 @@ def createUser(login_session):
         user = session.query(User).filter_by(email = login_session['email']).one()
         return user.id
     except exc.SQLAlchemyError as e:
-        return render_template('error.html',
-            errMessage="Error while communicating with the database.\n" + e.message)
+        return None
 
 def getUserInfo(user_id):
     try:
@@ -431,13 +467,15 @@ def getUserInfo(user_id):
         user = session.query(User).filter_by(id= user_id).one()
         return user
     except exc.SQLAlchemyError as e:
-        return render_template('error.html',
-            errMessage="Error while communicating with the database.\n" + e.message)
+        return None
+    except Exception as e:
+        return None
 
 def getUserID(email):
     try:
         session = DBSession()
         user = session.query(User).filter_by(email= email).one()
+        return user.id
     except:
         return None
 
