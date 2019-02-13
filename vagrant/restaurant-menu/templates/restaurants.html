@@ -40,23 +40,24 @@
                     role="button">
                     Menu
                   </a>
-                </div>
-                <div class="float-right">
-                  <a class="btn btn-sm btn-edit control"
-                  href="{{url_for('editRestaurant', restaurant_id=restaurant.id)}}"
-                  role="button">
-                  Edit
-                </a>
+                  </div>
+                  {% if user.id == restaurant.user_id%}
+                    <div class="float-right">
+                      <a class="btn btn-sm btn-edit control"
+                        href="{{url_for('editRestaurant', restaurant_id=restaurant.id)}}"
+                        role="button">
+                        Edit
+                      </a>
+                    </div>
+                    <div class="float-right">
+                        <a class="btn btn-sm btn-danger control"
+                        href="{{url_for('deleteRestaurant', restaurant_id=restaurant.id)}}"
+                        role="button">
+                        Delete
+                      </a>
+                    </div>
+                  {% endif %}
               </div>
-
-              <div class="float-right">
-                <a class="btn btn-sm btn-danger control"
-                href="{{url_for('deleteRestaurant', restaurant_id=restaurant.id)}}"
-                role="button">
-                Delete
-              </a>
-            </div>
-          </div>
 
           {% endfor %}
 
@@ -74,7 +75,7 @@
 
     {% include 'partials/libraries-js.html'%}
     <script src="{{url_for('static', filename = 'js/map-code.js')}}"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR-KEY-HERE=initMap"
+    <script src="https://maps.googleapis.com/maps/api/js?key=<YOUR-KEY-HERE>=initMap"
     async defer></script>
   </body>
 </html>
