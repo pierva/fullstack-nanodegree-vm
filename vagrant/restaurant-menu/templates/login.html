@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Login</title>
-  <meta name="google-signin-client_id" content="<YOU_CLIENT_ID>.apps.googleusercontent.com">
+  <meta name="google-signin-client_id" content="<client-id>.apps.googleusercontent.com">
   {% include 'partials/style-links.html'%}
 </head>
 <body>
@@ -16,7 +16,7 @@
       <div id="signinButton">
         <span class="g-signin"
           data-scope="openid email"
-          data-clientid="<YOU_CLIENT_ID>.apps.googleusercontent.com"
+          data-clientid="<client-id>.apps.googleusercontent.com"
           data-redirecturi="postmessage"
           data-accesstype="offline"
           data-cookiepolicy="single_host_origin"
@@ -24,6 +24,15 @@
           data-approvalprompt="force">
         </span>
       </div>
+      <div>
+        <fb:login-button
+          scope="public_profile,email"
+          onlogin="sendTokenToServer();">
+        </fb:login-button>
+
+      </div>
+
+
 
       <div class="">
         <a class="btn btn-dark btn-sm"
@@ -35,27 +44,11 @@
   </div>
   <script>
 
-    // function renderButton() {
-    //   $('#result').text("");
-    //   try {
-    //     gapi.signin2.render('my-signin2', {
-    //       'scope': 'profile email',
-    //       'width': 240,
-    //       'height': 50,
-    //       'longtitle': true,
-    //       'theme': 'dark',
-    //       'onsuccess': signInCallback,
-    //       'onfailure': onFailure
-    //     });
-    //   } catch (e) {
-    //     $("#result").html("Unable to load sign in button... Make sure you're connected to the internet.")
-    //   }
-    // }
-
+  // GOOGLE login
     function signInCallback(authResult) {
       if (authResult['code']) {
         // Hide the sign-in button now that the user is authorized
-        $('#signinButton').attr('style', 'display: none');
+        $('.login-container').attr('style', 'display: none');
         // Send the one-time-use code to the server, if the server responds, write a 'login successful' message to the web page and then redirect back to the main restaurants page
         $.ajax({
           type: 'POST',
@@ -69,7 +62,7 @@
               $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
              setTimeout(function() {
               window.location.href = "/restaurants";
-             }, 4000);
+            }, 2000);
 
           } else if (authResult['error']) {
             console.log('There was an error: ' + authResult['error']);
@@ -81,9 +74,63 @@
         });
       }
     }
+
+    // Facebook login
+
+    window.fbAsyncInit = function() {
+      FB.init({
+        appId      : '321084222084716',
+        cookie     : true,
+        xfbml      : true,
+        version    : 'v3.2'
+      });
+
+      FB.AppEvents.logPageView();
+    };
+
+    // Load the FB SDK asynchronously
+    (function(d, s, id){
+       var js, fjs = d.getElementsByTagName(s)[0];
+       if (d.getElementById(id)) {return;}
+       js = d.createElement(s); js.id = id;
+       js.src = "https://connect.facebook.net/en_US/sdk.js";
+       fjs.parentNode.insertBefore(js, fjs);
+     }(document, 'script', 'facebook-jssdk'));
+
+    function sendTokenToServer() {
+      var access_token = FB.getAuthResponse()['accessToken'];
+      console.log(access_token)
+      console.log('Welcome!  Fetching your information.... ');
+      FB.api('/me', function(response) {
+        console.log('Successful login for: ' + response.name);
+        $.ajax({
+          type: 'POST',
+          url: '/fbconnect?state={{STATE}}',
+          processData: false,
+          data: access_token,
+          contentType: 'application/octet-stream; charset=utf-8',
+          success: function(result) {
+           // Handle or verify the server response if necessary.
+          if (result) {
+            $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
+            setTimeout(function() {
+              window.location.href = "/restaurant";
+            }, 4000);
+
+            } else {
+              $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+            }
+          }
+        });
+      });
+    }
+
   </script>
   <script src="{{url_for('static', filename = 'js/lib/jquery-3.3.1.js')}}"></script>
   <script src="//apis.google.com/js/platform.js?onload=start"></script>
   <!-- <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script> -->
+
+
+
 </body>
 </html>
