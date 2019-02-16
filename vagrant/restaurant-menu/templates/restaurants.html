@@ -6,8 +6,10 @@
     {% include 'partials/style-links.html'%}
   </head>
   <body>
-        {% include 'partials/flash.html'%}
+    {% include 'partials/flash.html'%}
+    {% include 'partials/login-logout.html'%}
 
+      </div>
       <div class="container">
         <header class="page-header">
           <h1>Where you wanna dine?</h1>
@@ -24,6 +26,7 @@
                   <p>{{restaurant.name}}<p>
                     <a href="#" data-lat="{{restaurant.lat}}"
                     data-lon="{{restaurant.lon}}"
+                    data-name="{{restaurant.name}}"
                     class="show-on-map"
                     >
                     View on map
@@ -37,23 +40,24 @@
                     role="button">
                     Menu
                   </a>
-                </div>
-                <div class="float-right">
-                  <a class="btn btn-sm btn-edit control"
-                  href="{{url_for('editRestaurant', restaurant_id=restaurant.id)}}"
-                  role="button">
-                  Edit
-                </a>
+                  </div>
+                  {% if user.id == restaurant.user_id%}
+                    <div class="float-right">
+                      <a class="btn btn-sm btn-edit control"
+                        href="{{url_for('editRestaurant', restaurant_id=restaurant.id)}}"
+                        role="button">
+                        Edit
+                      </a>
+                    </div>
+                    <div class="float-right">
+                        <a class="btn btn-sm btn-danger control"
+                        href="{{url_for('deleteRestaurant', restaurant_id=restaurant.id)}}"
+                        role="button">
+                        Delete
+                      </a>
+                    </div>
+                  {% endif %}
               </div>
-
-              <div class="float-right">
-                <a class="btn btn-sm btn-danger control"
-                href="{{url_for('deleteRestaurant', restaurant_id=restaurant.id)}}"
-                role="button">
-                Delete
-              </a>
-            </div>
-          </div>
 
           {% endfor %}
 

@@ -37,14 +37,16 @@
           <div class="menu-card">
             <div class="row">
               <div class="col-7">
-                <a  class="btn btn-edit btn-sm control"
-                  href="{{url_for('editMenuItem', restaurant_id=restaurant.id, item_id = i.id)}}">
-                  Edit
-                </a>
-                <a class="btn btn-danger btn-sm control"
-                  href="{{url_for('deleteMenuItem', restaurant_id=restaurant.id, item_id = i.id)}}">
-                  Delete
-                </a>
+                {% if i.user_id == user.id%}
+                  <a  class="btn btn-edit btn-sm control"
+                    href="{{url_for('editMenuItem', restaurant_id=restaurant.id, item_id = i.id)}}">
+                    Edit
+                  </a>
+                  <a class="btn btn-danger btn-sm control"
+                    href="{{url_for('deleteMenuItem', restaurant_id=restaurant.id, item_id = i.id)}}">
+                    Delete
+                  </a>
+                {% endif %}
                 <div class="row">
                   <div class="col-12">
                     <p class="menu-title">{{i.name}}</p>
