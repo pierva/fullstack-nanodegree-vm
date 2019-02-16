@@ -178,6 +178,9 @@ legend{
   font-size: 1.5rem;
   background: rgba(51, 51, 51, 0.75);
   box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 

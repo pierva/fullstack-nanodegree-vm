@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Login</title>
-  <meta name="google-signin-client_id" content="<YOUR-CLIENT-D>.apps.googleusercontent.com">
+  <meta name="google-signin-client_id" content="<YOUR-CLIENT-ID>.apps.googleusercontent.com">
   {% include 'partials/style-links.html'%}
 </head>
 <body>
@@ -11,12 +11,12 @@
       Trying to load data from the server...
     </div>
     <div class="login-container">
-      <p>Please login with one of the below providers.</p>
+      <p class="mb-5">Please login with one of the below providers.</p>
 
       <div id="signinButton">
         <span class="g-signin"
           data-scope="openid email"
-          data-clientid="<YOUR-CLIENT-D>.apps.googleusercontent.com"
+          data-clientid="<YOUR-CLIENT-ID>.apps.googleusercontent.com"
           data-redirecturi="postmessage"
           data-accesstype="offline"
           data-cookiepolicy="single_host_origin"
@@ -26,19 +26,17 @@
       </div>
       <div>
         <fb:login-button
+          size="xlarge"
           scope="public_profile,email"
           onlogin="sendTokenToServer();">
         </fb:login-button>
-
       </div>
-
-
-
-      <div class="">
+      <div class="mt-5">
         <a class="btn btn-dark btn-sm"
-          href="{{url_for('showRestaurants')}}">CANCEL</a>
+        href="{{url_for('showRestaurants')}}">CANCEL</a>
       </div>
     </div>
+
 
     {% include 'partials/footer.html' %}
   </div>
@@ -76,7 +74,6 @@
     }
 
     // Facebook login
-
     window.fbAsyncInit = function() {
       FB.init({
         appId      : '321084222084716',
@@ -128,9 +125,6 @@
   </script>
   <script src="{{url_for('static', filename = 'js/lib/jquery-3.3.1.js')}}"></script>
   <script src="//apis.google.com/js/platform.js?onload=start"></script>
-  <!-- <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script> -->
-
-
 
 </body>
 </html>
