@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Login</title>
-  <meta name="google-signin-client_id" content="<client-id>.apps.googleusercontent.com">
+  <meta name="google-signin-client_id" content="<YOUR-CLIENT-D>.apps.googleusercontent.com">
   {% include 'partials/style-links.html'%}
 </head>
 <body>
@@ -16,7 +16,7 @@
       <div id="signinButton">
         <span class="g-signin"
           data-scope="openid email"
-          data-clientid="<client-id>.apps.googleusercontent.com"
+          data-clientid="<YOUR-CLIENT-D>.apps.googleusercontent.com"
           data-redirecturi="postmessage"
           data-accesstype="offline"
           data-cookiepolicy="single_host_origin"
@@ -114,7 +114,7 @@
           if (result) {
             $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
             setTimeout(function() {
-              window.location.href = "/restaurant";
+              window.location.href = "/restaurants";
             }, 4000);
 
             } else {
