@@ -59,7 +59,10 @@ def findARestaurant(mealType, location):
     try:
         if 'name' in restaurant:
             print 'Restaurant Name: %s' % restaurant['name']
-            print 'Restaurant Address: %s' % restaurant['location']['address']
+            if 'address' in restaurant:
+                print 'Restaurant Address: %s' % restaurant['location']['address']
+            else:
+                print 'Restaurant Address unavailable.'
             print 'Image: %s' % picture
             print '\n'
         else:
