@@ -47,7 +47,7 @@ def getVenuePicture(venueId):
         if len(details) > 0:
             return details[0]['prefix'] + "300x300" + details[0]['suffix']
         else:
-            return 'No picture available.'
+            return 'https://doc-0s-1k-docs.googleusercontent.com/docs/securesc/ha0ro937gcuc7l7deffksulhg5h7mbp1/l05jvvf8tsrtagddeheq3tev685asuie/1551045600000/11804516247872681719/*/1PktSHS6Hz_TTkvVybb3bXZrfzMKjYnzl'
     else:
         return "Error code %s.\n %s" % (results['meta']['code'], results['meta']['errorDetail'])
 
@@ -61,6 +61,8 @@ def findARestaurant(mealType, location):
             print 'Restaurant Name: %s' % restaurant['name']
             if 'address' in restaurant:
                 print 'Restaurant Address: %s' % restaurant['location']['address']
+            elif len(restaurant['location']['formattedAddress']) > 0:
+                print 'Restaurant Address: %s' % restaurant['location']['formattedAddress'][0]
             else:
                 print 'Restaurant Address unavailable.'
             print 'Image: %s' % picture
