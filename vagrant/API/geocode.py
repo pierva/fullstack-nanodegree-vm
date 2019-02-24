@@ -11,5 +11,8 @@ def getGeocodeLocation(address):
              }
     r = requests.get(url, params=params)
     results = r.json()
-    location = results['results'][0]['geometry']['location']
-    return location
+    if results['status'] == 'OK':
+        location = results['results'][0]['geometry']['location']
+        return location
+    else:
+        return results['status']
