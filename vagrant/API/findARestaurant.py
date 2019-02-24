@@ -24,7 +24,7 @@ def getRestaurant(mealType, latLon):
     params = {
                 'client_id': config.foursquare_client_id,
                 'client_secret': config.foursquare_secret,
-                'v': 20180323,
+                'v': config.foursquare_v,
                 'intent': 'browse',
                 'radius': 50000,
                 'll': latLon,
@@ -32,4 +32,23 @@ def getRestaurant(mealType, latLon):
              }
     r = requests.get(url, params=params)
     results = r.json()
-    print results
+    if results['meta']['code'] == 200:
+        return results['response']['venues'][0]
+    else:
+        return "Error code %s.\n %s" % (results['meta']['code'], results['meta']['errorDetail'])
+
+def getVenuePicture(venueId):
+    url = 'https://api.foursquare.com/v2/venues/%s/photos?' % venueId
+    params = {
+                'client_id': config.foursquare_client_id,
+                'client_secret': config.foursquare_secret,
+                'v': config.foursquare_v,
+                'limit': 10
+             }
+    r = requests.get(url, params=params)
+    results = r.json()
+    if results['meta']['code'] == 200:
+        details = results['response']['photos']['items'][0]
+        return details['prefix'] + "300x300" + details['suffix']
+    else:
+        return "Error code %s.\n %s" % (results['meta']['code'], results['meta']['errorDetail'])
