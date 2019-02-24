@@ -10,6 +10,7 @@ sys.stdout = codecs.getwriter('utf8')(sys.stdout)
 sys.stderr = codecs.getwriter('utf8')(sys.stderr)
 
 def getRestaurant(mealType, latLon):
+    #latLon is a string => '25.54654,-80.5834336'
     url = 'https://api.foursquare.com/v2/venues/search?'
     params = {
                 'client_id': config.foursquare_client_id,
@@ -33,7 +34,7 @@ def getVenuePicture(venueId):
                 'client_id': config.foursquare_client_id,
                 'client_secret': config.foursquare_secret,
                 'v': config.foursquare_v,
-                'limit': 10
+                'limit': 1
              }
     r = requests.get(url, params=params)
     results = r.json()
@@ -42,3 +43,18 @@ def getVenuePicture(venueId):
         return details['prefix'] + "300x300" + details['suffix']
     else:
         return "Error code %s.\n %s" % (results['meta']['code'], results['meta']['errorDetail'])
+
+def findARestaurant(mealType, location):
+    coord = getGeocodeLocation(location)
+    coordString = '{},{}'.format(coord[lat], coord[lng])
+    restaurant = getRestaurant(mealType, coordString)
+    picture = getVenuePicture(restaurant['id'])
+    try:
+        if 'name' in restaurant:
+            print 'Restaurant Name: %s' % restaurant['name']
+            print 'Restaurant Address: %s' % restaurant['location']['address']
+            print 'Image: %s' % picture
+        else:
+            print 'Somenthing when wrong. Unable to find a restaurant.'
+    except Exception as e:
+        print 'Error while processing your request.'
