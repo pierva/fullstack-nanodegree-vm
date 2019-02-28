@@ -27,7 +27,7 @@ CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 
 app = Flask(__name__)
-engine = engine = create_engine('sqlite:///menuswithusers.db')
+engine = create_engine('sqlite:///menuswithusers.db')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind = engine)
 
